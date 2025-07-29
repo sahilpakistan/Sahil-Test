@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Islamic Quiz — Earn & Learn</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://i.imgur.com/UEYzbjP.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      backdrop-filter: blur(6px);
+      padding: 20px;
+    }
+    .card {
+      background-color: rgba(0,0,0,0.6);
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+    h1, h3 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    input {
+      background: #eee;
+      color: #000;
+    }
+    button {
+      background: white;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .toggle {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    .toggle span {
+      color: #00f7ff;
+      cursor: pointer;
+    }
+    @media (max-width: 480px) {
+      .card { padding: 20px; }
+      input, button { font-size: 14px; padding: 12px; }
+      h1 { font-size: 1.5rem; }
+      h3 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Islamic Quiz</h1>
+      <h3>— Earn & Learn Platform</h3>
+
+      <!-- Login Form -->
+      <div id="loginForm">
+        <input type="email" id="logEmail" placeholder="Gmail" />
+        <input type="password" id="logPassword" placeholder="Password" />
+        <button onclick="login()">Login</button>
+        <div class="toggle">Don't have an account? <span onclick="showRegister()">Register</span></div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerForm" style="display: none;">
+        <input type="email" id="regEmail" placeholder="Gmail" />
+        <input type="password" id="regPassword" placeholder="Password" />
+        <button onclick="register()">Get Code</button>
+        <div class="toggle">Already have an account? <span onclick="showLogin()">Login</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOTwS-H0NQmj6-jDNAlFzu4Yv81f86tTU",
+      authDomain: "islamic-quiz-fe72f.firebaseapp.com",
+      projectId: "islamic-quiz-fe72f",
+      storageBucket: "islamic-quiz-fe72f.firebasestorage.app",
+      messagingSenderId: "523541510921",
+      appId: "1:523541510921:web:b78005ef3bc1f1a14a31d8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function showRegister() {
+      document.getElementById("loginForm").style.display = "none";
+      document.getElementById("registerForm").style.display = "block";
+    }
+
+    function showLogin() {
+      document.getElementById("registerForm").style.display = "none";
+      document.getElementById("loginForm").style.display = "block";
+    }
+
+    function register() {
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(userCred => {
+          userCred.user.sendEmailVerification();
+          alert("✅ Verification link sent to your Gmail.");
+          showLogin();
+        })
+        .catch(error => {
+          alert("❌ " + error.message);
+        });
+    }
+
+    function login() {
+      const email = document.getElementById("logEmail").value;
+      const password = document.getElementById("logPassword").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(userCred => {
+          if (userCred.user.emailVerified) {
+            alert("✅ Login successful!");
+            window.location.href = "dashboard.html";
+          } else {
+            alert("⚠️ Please verify your Gmail first.");
+          }
+        })
+        .catch(error => {
+          alert("❌ " + error.message);
+        });
+    }
+  </script>
+</body>
+</html>
